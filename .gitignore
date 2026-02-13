@@ -5,6 +5,10 @@
 
 .vscode/
 
+# Godot-specific
+*.import
+*.uid
+
 # dotenv files
 .env
 
