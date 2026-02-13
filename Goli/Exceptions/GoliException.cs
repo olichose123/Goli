@@ -1,5 +1,6 @@
 namespace Goli.Exceptions;
 
+using System;
 using Godot;
 
 public class GoliException : Exception
