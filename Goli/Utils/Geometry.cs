@@ -41,4 +41,48 @@ public class Geometry
 
         return new Rect2(min, max - min);
     }
+
+    /// <summary>
+    /// Draw a line in 3d space that always faces the camera
+    /// </summary>
+    /// <param name="start">The global position of the line's origin</param>
+    /// <param name="end">The global position of the line's end</param>
+    /// <param name="lineWidth"></param>
+    /// <param name="mesh"></param>
+    /// <param name="camera"></param>
+    public static void DrawLine3D(Vector3 start, Vector3 end, float lineWidth, ImmediateMesh mesh, Camera3D camera)
+    {
+        Vector3 lineDir = end.Normalized();
+        Vector3 midPoint = end / 2.0f;
+        Vector3 toCamera;
+
+        toCamera = (camera.GlobalPosition - (start + midPoint)).Normalized();
+
+        Vector3 side = lineDir.Cross(toCamera).Normalized();
+
+        if (side.IsZeroApprox())
+        {
+            side = lineDir.Cross(Vector3.Up).Normalized();
+        }
+
+        side *= lineWidth / 2.0f;
+        Vector3 p1 = -side;
+        Vector3 p2 = side;
+        Vector3 p3 = end - side;
+        Vector3 p4 = end + side;
+
+        mesh.SurfaceSetUV(new Vector2(0, 0));
+        mesh.SurfaceAddVertex(p1);
+        mesh.SurfaceSetUV(new Vector2(0, 1));
+        mesh.SurfaceAddVertex(p3);
+        mesh.SurfaceSetUV(new Vector2(1, 1));
+        mesh.SurfaceAddVertex(p4);
+
+        mesh.SurfaceSetUV(new Vector2(1, 1));
+        mesh.SurfaceAddVertex(p4);
+        mesh.SurfaceSetUV(new Vector2(1, 0));
+        mesh.SurfaceAddVertex(p2);
+        mesh.SurfaceSetUV(new Vector2(0, 0));
+        mesh.SurfaceAddVertex(p1);
+    }
 }

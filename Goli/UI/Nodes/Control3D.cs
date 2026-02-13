@@ -2,6 +2,9 @@ namespace Goli.UI.Nodes;
 
 using Godot;
 
+/// <summary>
+/// A Control that positions itself in screen space based on a 3D Target Node3D and Camera3D.
+/// </summary>
 [GlobalClass]
 public partial class Control3D : Control
 {

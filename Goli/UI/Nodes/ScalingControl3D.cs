@@ -4,6 +4,9 @@ using Godot;
 using Goli.UI.Nodes;
 using Goli.Utils;
 
+/// <summary>
+/// A Control3D that scales to fit a VisualInstance3D (and its parent Target) in screen space.
+/// </summary>
 [GlobalClass]
 public partial class ScalingControl3D : Control3D
 {
