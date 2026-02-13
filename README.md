@@ -1,0 +1,2 @@
+# Goli
+Godot utility library
