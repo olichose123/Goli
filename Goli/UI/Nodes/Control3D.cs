@@ -46,12 +46,12 @@ public partial class Control3D : Control
 
     public override void _Process(double delta)
     {
-        if (HideWhenBehindCamera && isBehindCamera())
+        if (HideWhenLargerThanViewport && Size > Camera.GetViewport().GetVisibleRect().Size)
             Hide();
         else
             Show();
 
-        if (HideWhenLargerThanViewport && Size > Camera.GetViewport().GetVisibleRect().Size)
+        if (HideWhenBehindCamera && isBehindCamera())
             Hide();
         else
             Show();
