@@ -17,3 +17,31 @@ public class MissingPropertyException : GoliException
     {
     }
 }
+
+public class ResourceDoesNotExistException : GoliException
+{
+    public ResourceDoesNotExistException(string message) : base(message)
+    {
+    }
+}
+
+public class ResourceAlreadyExistsException : GoliException
+{
+    public ResourceAlreadyExistsException(string message) : base(message)
+    {
+    }
+}
+
+public class CannotLoadResourceException : GoliException
+{
+    public CannotLoadResourceException(string message) : base(message)
+    {
+    }
+}
+
+public class CannotSaveResourceException : GoliException
+{
+    public CannotSaveResourceException(string message) : base(message)
+    {
+    }
+}
