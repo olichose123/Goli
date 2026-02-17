@@ -18,7 +18,6 @@ public partial class SerializedResource : Resource
         ResourceType = GetType().FullName;
     }
 
-
     public override Variant _Get(StringName property)
     {
         return base._Get(property);
@@ -45,18 +44,6 @@ public partial class SerializedResource : Resource
         return null;
     }
 
-    bool hasLocalAttribute(Dictionary prop)
-    {
-        string propName = prop["name"].AsString();
-        var type = GetType();
-        var field = type.GetField(propName);
-        var p = type.GetProperty(propName);
-
-        return (field != null && field.GetCustomAttribute<LocalAttribute>() != null) ||
-                        (p != null && p.GetCustomAttribute<LocalAttribute>() != null);
-
-    }
-
     public Dictionary ToDictionary(bool anonymous = false)
     {
         var dict = new Dictionary();
@@ -77,17 +64,6 @@ public partial class SerializedResource : Resource
             var resValue = value.As<Resource>();
             if (resValue != null)
             {
-                if (resValue.GetType().IsSubclassOf(typeof(SerializedResource)))
-                {
-                    var field = GetType().GetField(propName);
-                    var p = GetType().GetProperty(propName);
-                    if ((field != null && field.GetCustomAttribute<LocalAttribute>() != null) ||
-                        (p != null && p.GetCustomAttribute<LocalAttribute>() != null))
-                    {
-                        dict[propName] = ((SerializedResource)resValue).ToDictionary(true);
-                        continue;
-                    }
-                }
                 dict[propName] = resValue.ResourcePath;
             }
             else
@@ -95,11 +71,8 @@ public partial class SerializedResource : Resource
                 dict[propName] = value;
             }
         }
-
         return dict;
     }
-
-
 
     public void FromDictionary(Dictionary dict, bool anonymous = false)
     {
@@ -121,26 +94,11 @@ public partial class SerializedResource : Resource
 
             if (hasClass(prop))
             {
-
-                if (hasLocalAttribute(prop))
+                var path = dict[propName].AsString();
+                if (path != null && path != "")
                 {
-                    Type? fieldType = getFieldType(prop["name"].AsString());
-                    if (fieldType.IsSubclassOf(typeof(SerializedResource)))
-                    {
-                        var obj = Activator.CreateInstance(fieldType) as SerializedResource;
-                        obj.FromDictionary(dict[propName].As<Dictionary>(), true);
-                        Set(propName, obj);
-                        continue;
-                    }
-                }
-                else
-                {
-                    var path = dict[propName].AsString();
-                    if (path != null && path != "")
-                    {
-                        Set(propName, ResourceLoader.Load(path, "", ResourceLoader.CacheMode.Replace));
-                        continue;
-                    }
+                    Set(propName, ResourceLoader.Load(path, "", ResourceLoader.CacheMode.Replace));
+                    continue;
                 }
             }
 
