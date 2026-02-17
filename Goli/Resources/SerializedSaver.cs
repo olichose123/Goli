@@ -11,7 +11,7 @@ public partial class SerializedSaver : ResourceFormatSaver
 
     public SerializedSaver() : base()
     {
-        GD.Print("SerializedSaver initialized");
+
     }
 
 

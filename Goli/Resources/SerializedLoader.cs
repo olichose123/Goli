@@ -12,7 +12,7 @@ public partial class SerializedLoader : ResourceFormatLoader
 
     public SerializedLoader() : base()
     {
-        GD.Print("SerializedLoader initialized");
+
     }
 
     public override string[] _GetRecognizedExtensions()
