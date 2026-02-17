@@ -8,6 +8,8 @@ using Goli.Exceptions;
 [GlobalClass, Tool]
 public partial class SerializedLoader : ResourceFormatLoader
 {
+    static string extension = "jsonr";
+
     public SerializedLoader() : base()
     {
         GD.Print("SerializedLoader initialized");
@@ -15,22 +17,25 @@ public partial class SerializedLoader : ResourceFormatLoader
 
     public override string[] _GetRecognizedExtensions()
     {
-        return new string[] { "jsonr" };
+        return new string[] { extension };
     }
 
     public override string _GetResourceType(string path)
     {
+        if (path.GetExtension() != extension)
+        {
+            return "";
+        }
         return "Resource";
     }
 
     public override bool _HandlesType(StringName type)
     {
-        return ClassDB.IsParentClass(type, "Resource");
+        return type == "Resource";
     }
 
     public override Variant _Load(string path, string originalPath, bool useSubThreads, int cacheMode)
     {
-        GD.Print($"Loading resource from {path}");
         try
         {
             FileAccess file = FileAccess.Open(path, FileAccess.ModeFlags.Read);

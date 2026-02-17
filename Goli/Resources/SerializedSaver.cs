@@ -7,6 +7,8 @@ using Goli.Exceptions;
 [GlobalClass, Tool]
 public partial class SerializedSaver : ResourceFormatSaver
 {
+    static string extension = "jsonr";
+
     public SerializedSaver() : base()
     {
         GD.Print("SerializedSaver initialized");
@@ -15,7 +17,11 @@ public partial class SerializedSaver : ResourceFormatSaver
 
     public override string[] _GetRecognizedExtensions(Resource resource)
     {
-        return new string[] { "jsonr" };
+        if (resource as SerializedResource != null)
+        {
+            return new string[] { extension };
+        }
+        return new string[0];
     }
 
     public override bool _Recognize(Resource resource)

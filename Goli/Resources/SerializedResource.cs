@@ -1,9 +1,11 @@
 namespace Goli.Resources;
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Godot;
 using Godot.Collections;
+using Microsoft.VisualBasic.FileIO;
 
 [GlobalClass, Tool]
 public partial class SerializedResource : Resource
@@ -14,6 +16,45 @@ public partial class SerializedResource : Resource
     public SerializedResource() : base()
     {
         ResourceType = GetType().FullName;
+    }
+
+
+    public override Variant _Get(StringName property)
+    {
+        return base._Get(property);
+    }
+
+    bool hasClass(Dictionary prop)
+    {
+        return prop["class_name"].AsString() != "";
+    }
+
+    Type getFieldType(string propName)
+    {
+        var type = GetType();
+        var field = type.GetField(propName);
+        var p = type.GetProperty(propName);
+        if (field != null)
+        {
+            return field.FieldType;
+        }
+        else if (p != null)
+        {
+            return p.PropertyType;
+        }
+        return null;
+    }
+
+    bool hasLocalAttribute(Dictionary prop)
+    {
+        string propName = prop["name"].AsString();
+        var type = GetType();
+        var field = type.GetField(propName);
+        var p = type.GetProperty(propName);
+
+        return (field != null && field.GetCustomAttribute<LocalAttribute>() != null) ||
+                        (p != null && p.GetCustomAttribute<LocalAttribute>() != null);
+
     }
 
     public Dictionary ToDictionary(bool anonymous = false)
@@ -58,6 +99,8 @@ public partial class SerializedResource : Resource
         return dict;
     }
 
+
+
     public void FromDictionary(Dictionary dict, bool anonymous = false)
     {
         if (!anonymous && dict.ContainsKey("type"))
@@ -76,35 +119,17 @@ public partial class SerializedResource : Resource
                 continue;
             }
 
-            if (prop["class_name"].AsString() != "")
+            if (hasClass(prop))
             {
-                var type = GetType();
-                var field = GetType().GetField(propName);
-                var p = GetType().GetProperty(propName);
-                if ((field != null && field.GetCustomAttribute<LocalAttribute>() != null) ||
-                        (p != null && p.GetCustomAttribute<LocalAttribute>() != null))
+
+                if (hasLocalAttribute(prop))
                 {
-                    Type? t = null;
-                    if (field != null)
+                    Type? fieldType = getFieldType(prop["name"].AsString());
+                    if (fieldType.IsSubclassOf(typeof(SerializedResource)))
                     {
-                        t = field.FieldType;
-                    }
-                    else if (p != null)
-                    {
-                        t = p.PropertyType;
-                    }
-                    if (t != null)
-                    {
-                        if (t.IsSubclassOf(typeof(SerializedResource)))
-                        {
-                            var obj = Activator.CreateInstance(t) as SerializedResource;
-                            obj.FromDictionary(dict[propName].As<Dictionary>(), true);
-                            Set(propName, obj);
-                            continue;
-                        }
-                    }
-                    else
-                    {
+                        var obj = Activator.CreateInstance(fieldType) as SerializedResource;
+                        obj.FromDictionary(dict[propName].As<Dictionary>(), true);
+                        Set(propName, obj);
                         continue;
                     }
                 }
@@ -112,14 +137,14 @@ public partial class SerializedResource : Resource
                 {
                     var path = dict[propName].AsString();
                     if (path != null && path != "")
-                        Set(propName, ResourceLoader.Load(path));
+                    {
+                        Set(propName, ResourceLoader.Load(path, "", ResourceLoader.CacheMode.Replace));
+                        continue;
+                    }
                 }
             }
-            else
-            {
-                Set(propName, dict[propName]);
-            }
 
+            Set(propName, dict[propName]);
             if (!anonymous)
                 this.ResourceName = dict["name"].AsString();
         }
