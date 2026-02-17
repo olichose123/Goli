@@ -46,7 +46,11 @@ public partial class SerializedLoader : ResourceFormatLoader
             var t = Type.GetType(resourceType, true, true);
 
             var res = Activator.CreateInstance(t) as SerializedResource;
-
+            if (res == null)
+            {
+                GD.PrintErr($"Failed to create instance of type {resourceType}");
+                throw new CannotLoadResourceException($"Failed to create instance of type {resourceType}");
+            }
             res.FromDictionary(data.As<Dictionary>());
 
             return res;

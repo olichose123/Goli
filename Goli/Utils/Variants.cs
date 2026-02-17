@@ -34,7 +34,6 @@ public static class Variants
         { typeof(NodePath), Variant.Type.NodePath },
         { typeof(Rid), Variant.Type.Rid },
         { typeof(GodotObject), Variant.Type.Object },
-        { typeof(SubResource), Variant.Type.Object }, // subresource
         { typeof(Callable), Variant.Type.Callable },
         { typeof(Signal), Variant.Type.Signal },
         { typeof(Godot.Collections.Dictionary), Variant.Type.Dictionary },
@@ -48,7 +47,7 @@ public static class Variants
         { typeof(Vector2[]), Variant.Type.PackedVector2Array },
         { typeof(Vector3[]), Variant.Type.PackedVector3Array },
         { typeof(Color[]), Variant.Type.PackedColorArray },
-        { typeof(Vector4[]), Variant.Type.PackedVector4Array }
+        { typeof(Vector4[]), Variant.Type.PackedVector4Array },
     };
 
     /// <summary>
@@ -69,6 +68,10 @@ public static class Variants
         }
         else
         {
+            if (type.IsSubclassOf(typeof(GodotObject)))
+            {
+                return Variant.Type.Object;
+            }
             GD.PrintErr($"Type {type} is not supported for export");
             throw new NotSupportedException($"Type {type} is not supported for export");
         }

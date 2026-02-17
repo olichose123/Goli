@@ -6,7 +6,7 @@ using System.Reflection;
 using Godot;
 using Goli.Utils;
 
-public partial class SubResource : GodotObject
+public partial class SubResource
 {
 
     /// <summary>
@@ -39,56 +39,8 @@ public partial class SubResource : GodotObject
         return exportedFields;
     }
 
-
     public SubResource() : base()
     {
+
     }
-
-    public override Godot.Collections.Array<Godot.Collections.Dictionary> _GetPropertyList()
-    {
-        var properties = new Godot.Collections.Array<Godot.Collections.Dictionary>();
-        var fields = SubResource.GetExportedFields(GetType());
-
-        foreach (var field in fields)
-        {
-            var dict = new Godot.Collections.Dictionary();
-            dict["name"] = field.Name;
-            dict["type"] = (int)Variants.GetVariantType(field.FieldType);
-            dict["hint"] = "";
-            dict["hint_string"] = "";
-            properties.Add(dict);
-        }
-        return properties;
-    }
-
-    public override Variant _Get(StringName property)
-    {
-        var field = GetType().GetField(property);
-        if (field != null)
-        {
-            return Variants.ConvertToVariant(field.GetValue(this));
-        }
-        else
-        {
-            GD.PrintErr($"Property {property} not found in SubResource of type {GetType().Name}");
-            return default;
-        }
-    }
-
-    public override bool _Set(StringName property, Variant value)
-    {
-        var field = GetType().GetField(property);
-        if (field != null)
-        {
-
-            field.SetValue(this, Convert.ChangeType(value.Obj, field.FieldType));
-            return true;
-        }
-        else
-        {
-            GD.PrintErr($"Property {property} not found in SubResource of type {GetType().Name}");
-        }
-        return false;
-    }
-
 }

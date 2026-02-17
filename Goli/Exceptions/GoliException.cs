@@ -45,3 +45,10 @@ public class CannotSaveResourceException : GoliException
     {
     }
 }
+
+public class UnnamedResourceException : GoliException
+{
+    public UnnamedResourceException(string message) : base(message)
+    {
+    }
+}
