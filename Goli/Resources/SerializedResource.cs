@@ -200,12 +200,6 @@ public partial class SerializedResource : Resource
 
     public Dictionary ToDictionary()
     {
-        if (ResourceName == "")
-        {
-            GD.PrintErr($"Cannot serialize resource of type {GetType().Name} with empty name");
-            throw new Goli.Exceptions.UnnamedResourceException($"Cannot serialize resource of type {GetType().Name} with empty name");
-        }
-
         var dict = new Dictionary();
 
         dict["type"] = ResourceType;

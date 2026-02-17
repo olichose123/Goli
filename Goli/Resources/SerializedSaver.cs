@@ -39,9 +39,16 @@ public partial class SerializedSaver : ResourceFormatSaver
     {
         try
         {
+            if ((resource as SerializedResource).ResourceName == "" || (resource as SerializedResource).ResourceName == null)
+            {
+                GD.PrintErr($"Resource {resource.ResourceName} must have a name to be saved as JSON");
+                return Error.FileCantWrite;
+            }
+
             FileAccess file = FileAccess.Open(path, FileAccess.ModeFlags.Write);
             file.StoreLine(Json.Stringify(((SerializedResource)resource).ToDictionary(), "  "));
             file.Close();
+            GD.Print("SerializedResource saved successfully");
             return Error.Ok;
         }
         catch (Exception e)
