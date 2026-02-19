@@ -48,7 +48,6 @@ public partial class SerializedSaver : ResourceFormatSaver
             FileAccess file = FileAccess.Open(path, FileAccess.ModeFlags.Write);
             file.StoreLine(Json.Stringify(((SerializedResource)resource).ToDictionary(), "  "));
             file.Close();
-            GD.Print("SerializedResource saved successfully");
             return Error.Ok;
         }
         catch (Exception e)
